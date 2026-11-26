@@ -406,4 +406,11 @@
         a:hover { color: #f59e0b; }
         code { background: #27272a; color: #fef08a; padding: 2px 7px; border-radius: 4px; font-family: 'Fira Code', Consolas, monospace; font-size: 0.9em; }
         pre { background: #18181b; padding: 1rem; border-radius: 8px; overflow-x: auto; border: 1px solid #27272a; }
-        hr { border: 0; height: 1px; background: #27272a; margin: 2rem 0; }
+        hr { border: 0; height: 1px; background: #27272a; margin: 2rem 0; 
+html, body {
+  height: auto !important;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto !important;
+}
+            
