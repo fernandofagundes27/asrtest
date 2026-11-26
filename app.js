@@ -282,6 +282,13 @@
         img.src = BASE_RAW + nomeArquivo;
       }
     });
+        // Remove o prefixo "img/" para ler as imagens direto da raiz
+    document.querySelectorAll('img').forEach((img) => {
+      const src = img.getAttribute('src') || '';
+      if (src.startsWith('img/')) {
+        img.src = src.replace(/^img\//, '');
+      }
+    });
     
 
     // Modo escuro persistente
