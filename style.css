@@ -412,5 +412,14 @@ html, body {
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto !important;
+      
+}
+            /* Destrava a rolagem vertical em todas as páginas */
+html, body {
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  position: static !important;
 }
             
