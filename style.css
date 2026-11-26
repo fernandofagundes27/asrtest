@@ -1,0 +1,409 @@
+/* Origem: indexsite.html */
+:root {
+      --bg-bar: #ffffff;
+      --bg-toc: #fafafa;
+      --bg-sidebar: #ffffff;
+      --bg-hover: #f0f1f4;
+      --bg-active: #fdf2f4;
+      --bg-canvas: #f8f9fa;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --border-color: #e5e7eb;
+      --accent: #7a1c2e;
+      --accent-hover: #5e1422;
+      --accent-secondary: #c2591b;
+      --accent-text: #ffffff;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.14);
+      --backdrop: rgba(0, 0, 0, 0.45);
+    }
+
+    body.dark-mode {
+      --bg-bar: #121214;
+      --bg-toc: #17171a;
+      --bg-sidebar: #161619;
+      --bg-hover: #25252b;
+      --bg-active: #2d161b;
+      --bg-canvas: #0d0d0f;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --border-color: #2c2c34;
+      --accent: #8f2237;
+      --accent-hover: #a82942;
+      --accent-secondary: #d96b27;
+      --accent-text: #ffffff;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+      --backdrop: rgba(0, 0, 0, 0.68);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100vh;
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Cabeçalho Fixo no Topo (Barra + Linha Horizontal de Títulos) */
+    .top-header {
+      flex-shrink: 0;
+      background-color: var(--bg-bar);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 100;
+      transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .topbar {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 10px;
+    }
+
+    .menu-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border-color);
+      background: transparent;
+      color: var(--text-primary);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      flex-shrink: 0;
+      transition: background-color 0.15s;
+    }
+
+    .menu-btn:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .menu-btn span {
+      display: block;
+      width: 17px;
+      height: 2px;
+      background-color: currentColor;
+      border-radius: 2px;
+    }
+
+    .current-page-title {
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text-primary);
+      flex: 1;
+    }
+
+    /* Menu Horizontal Rolante de Títulos (H1, H2) no Topo */
+    .toc-horizontal-bar {
+      background-color: var(--bg-toc);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .toc-horizontal-bar::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .toc-horizontal-bar::-webkit-scrollbar-thumb {
+      background-color: var(--border-color);
+      border-radius: 3px;
+    }
+
+    .toc-empty {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      padding: 2px 2px;
+    }
+
+    .toc-item {
+      flex-shrink: 0;
+      background-color: var(--bg-bar);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      cursor: pointer;
+      padding: 5px 11px;
+      line-height: 1.3;
+      white-space: nowrap;
+      transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .toc-item:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .toc-item.active {
+      background-color: var(--bg-active);
+      border-color: var(--accent);
+    }
+
+    .toc-item.level-h1 {
+      font-size: 13px;
+      font-weight: 700;
+      border-left: 3px solid var(--accent);
+    }
+
+    .toc-item.level-h2 {
+      font-size: 12.5px;
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+
+    .toc-item.level-h2:hover,
+    .toc-item.level-h2.active {
+      color: var(--text-primary);
+    }
+
+    /* Overlay & Menu Lateral (Estilo Twitter/X, sobrepondo) */
+    .sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: var(--backdrop);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
+      z-index: 200;
+    }
+
+    .sidebar-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: min(310px, 84vw);
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      transform: translateX(-100%);
+      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s;
+      z-index: 250;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      height: 48px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .close-sidebar-btn {
+      width: 34px;
+      height: 34px;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      font-size: 22px;
+      line-height: 1;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-sidebar-btn:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .sidebar-actions {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .dark-mode-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 4px 2px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      background-color: var(--border-color);
+      border-radius: 999px;
+      transition: background-color 0.2s;
+    }
+
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      transition: transform 0.2s;
+    }
+
+    body.dark-mode .switch {
+      background-color: var(--accent);
+    }
+
+    body.dark-mode .switch::after {
+      transform: translateX(18px);
+    }
+
+    /* Menu lateral: só o item fixo "INÍCIO" */
+    .page-list {
+      list-style: none;
+      flex: none;
+      padding: 4px 8px 0;
+    }
+
+    .page-item {
+      border-radius: 8px;
+      margin-bottom: 2px;
+      transition: background-color 0.15s;
+    }
+
+    .page-item:hover {
+      background-color: var(--bg-hover);
+    }
+
+    .page-item.active {
+      background-color: var(--bg-active);
+    }
+
+    .page-select-btn {
+      width: 100%;
+      background: transparent;
+      border: none;
+      text-align: left;
+      padding: 10px 10px;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: block;
+      word-break: break-word;
+      line-height: 1.35;
+    }
+
+    .page-item.active .page-select-btn {
+      color: var(--accent);
+    }
+
+    body.dark-mode .page-item.active .page-select-btn {
+      color: var(--accent-secondary);
+    }
+
+    /* Área Principal de Visualização */
+    .viewer-container {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      background-color: var(--bg-canvas);
+    }
+
+    /* O iframe mantém o fundo branco padrão do navegador para não alterar o layout das páginas */
+    #page-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background-color: #ffffff;
+    }
+
+/* Origem: indexsite.html */
+' +
+          ESTILO_DAS_TELAS_INTERNAS +
+          '\n
+
+/* Origem: 1980s.html */
+:root {
+            color-scheme: dark;
+        }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.75;
+            color: #e4e4e7;
+            background-color: #121214;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #ffffff;
+            font-weight: 700;
+            line-height: 1.25;
+            margin-top: 1.6em;
+            margin-bottom: 0.6em;
+        }
+        h1 { font-size: 2.25rem; border-bottom: 2px solid #27272a; padding-bottom: 0.4rem; }
+        h2 { font-size: 1.75rem; border-bottom: 1px solid #1f1f23; padding-bottom: 0.3rem; }
+        h3 { font-size: 1.35rem; }
+        h4 { font-size: 1.15rem; }
+        p { margin-bottom: 1.2rem; }
+        ul, ol { padding-left: 1.8rem; margin-bottom: 1.2rem; }
+        li { margin-bottom: 0.3rem; }
+        table { border-collapse: collapse; width: 100%; margin: 1.5rem 0; font-size: 0.95rem; }
+        th, td { border: 1px solid #27272a; padding: 10px 14px; text-align: left; }
+        th { background-color: #1c1c20; color: #fbbf24; font-weight: 600; }
+        tr:nth-child(even) td { background-color: rgba(255, 255, 255, 0.02); }
+        img { max-width: 100%; height: auto; display: block; margin: 1.5rem auto; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+        blockquote { border-left: 4px solid #f59e0b; background-color: rgba(245, 158, 11, 0.06); padding: 0.8rem 1.2rem; margin: 1.2rem 0; color: #d4d4d8; font-style: italic; border-radius: 0 8px 8px 0; }
+        a { color: #fbbf24; text-decoration: underline; text-underline-offset: 3px; }
+        a:hover { color: #f59e0b; }
+        code { background: #27272a; color: #fef08a; padding: 2px 7px; border-radius: 4px; font-family: 'Fira Code', Consolas, monospace; font-size: 0.9em; }
+        pre { background: #18181b; padding: 1rem; border-radius: 8px; overflow-x: auto; border: 1px solid #27272a; }
+        hr { border: 0; height: 1px; background: #27272a; margin: 2rem 0; }
