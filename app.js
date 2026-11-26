@@ -273,10 +273,14 @@
 
     document.body.insertBefore(wrapper, document.body.firstChild);
 
-        // Redireciona imagens para a branch fernandofagundes27-patch-1
+    // Redireciona imagens para a raiz da branch fernandofagundes27-patch-1
     const BASE_RAW = 'https://raw.githubusercontent.com/fernandofagundes27/asrtest/fernandofagundes27-patch-1/';
-    document.querySelectorAll('img[src^="img/"]').forEach((img) => {
-    img.src = BASE_RAW + img.getAttribute('src').replace(/^img\//, '');
+    document.querySelectorAll('img').forEach((img) => {
+      const srcOriginal = img.getAttribute('src') || '';
+      if (srcOriginal.startsWith('img/')) {
+        const nomeArquivo = srcOriginal.replace(/^img\//, '');
+        img.src = BASE_RAW + nomeArquivo;
+      }
     });
     
 
